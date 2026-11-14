@@ -1,0 +1,158 @@
+/* Windows 11 clipboard (Win+V) look */
+.wcb-panel {
+  border-radius: 8px;
+  padding: 12px 8px 8px 8px;
+  spacing: 8px;
+  font-size: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
+}
+.wcb-header { padding: 0 6px 2px 8px; }
+.wcb-title { font-weight: 600; font-size: 14px; }
+.wcb-clear {
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+.wcb-scroll { padding: 0; }
+.wcb-list { spacing: 4px; padding: 0 4px 2px 4px; }
+
+.wcb-card {
+  border-radius: 6px;
+  border: 2px solid transparent;
+  min-height: 44px;
+}
+.wcb-content {
+  padding: 10px 6px 10px 12px;
+  border-radius: 6px;
+  text-align: left;
+}
+.wcb-text { font-size: 14px; }
+.wcb-image { border-radius: 4px; }
+.wcb-actions { padding: 6px 6px 0 0; spacing: 2px; }
+.wcb-action {
+  padding: 6px;
+  border-radius: 4px;
+}
+.wcb-pinned-indicator { icon-size: 14px; padding: 7px 4px; }
+.wcb-empty {
+  padding: 28px 18px;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* ---------- dark ---------- */
+.wcb-dark {
+  background-color: rgba(36, 36, 36, 0.985);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+.wcb-dark .wcb-title, .wcb-dark .wcb-text, .wcb-dark .wcb-action,
+.wcb-dark .wcb-pinned-indicator { color: #ffffff; }
+.wcb-dark .wcb-empty { color: rgba(255, 255, 255, 0.72); }
+.wcb-dark .wcb-clear {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.wcb-dark .wcb-clear:hover { background-color: rgba(255, 255, 255, 0.10); }
+.wcb-dark .wcb-clear:active { background-color: rgba(255, 255, 255, 0.04); color: rgba(255,255,255,0.8); }
+.wcb-dark .wcb-card { background-color: rgba(255, 255, 255, 0.055); }
+.wcb-dark .wcb-card:hover { background-color: rgba(255, 255, 255, 0.085); }
+.wcb-dark .wcb-card:selected { border-color: rgba(255, 255, 255, 0.92); }
+.wcb-dark .wcb-content:active { background-color: rgba(255, 255, 255, 0.03); }
+.wcb-dark .wcb-action:hover, .wcb-dark .wcb-more:checked { background-color: rgba(255, 255, 255, 0.09); }
+.wcb-dark .wcb-action:active { background-color: rgba(255, 255, 255, 0.05); }
+.wcb-dark .wcb-action:active { color: rgba(255,255,255,0.8); }
+
+/* ---------- light ---------- */
+.wcb-light {
+  background-color: rgba(243, 243, 243, 0.985);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  color: #1b1b1b;
+}
+.wcb-light .wcb-title, .wcb-light .wcb-text, .wcb-light .wcb-action,
+.wcb-light .wcb-pinned-indicator { color: #1b1b1b; }
+.wcb-light .wcb-empty { color: rgba(0, 0, 0, 0.62); }
+.wcb-light .wcb-clear {
+  color: #1b1b1b;
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.wcb-light .wcb-clear:hover { background-color: rgba(250, 250, 250, 0.6); }
+.wcb-light .wcb-card { background-color: rgba(255, 255, 255, 0.75); }
+.wcb-light .wcb-card:hover { background-color: rgba(250, 250, 250, 0.55); }
+.wcb-light .wcb-card:selected { border-color: rgba(0, 0, 0, 0.88); }
+.wcb-light .wcb-action:hover, .wcb-light .wcb-more:checked { background-color: rgba(0, 0, 0, 0.06); }
+.wcb-light .wcb-action:active { background-color: rgba(0, 0, 0, 0.03); }
+
+/* ---------- tabs (Win+. style) ---------- */
+.wcb-panel { padding-top: 8px; }
+.wcb-tabs { spacing: 4px; padding: 0 4px; }
+.wcb-tab { padding: 7px 14px; border-radius: 4px; }
+.wcb-page { spacing: 8px; }
+
+/* ---------- emoji page ---------- */
+.wcb-search-row { spacing: 6px; padding: 0 4px; }
+.wcb-search {
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+.wcb-search-icon { icon-size: 14px; padding-right: 6px; }
+.wcb-tone-button, .wcb-emoji {
+  font-size: 22px;
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  border: 2px solid transparent;
+}
+.wcb-tone-row { spacing: 2px; padding: 0 4px; }
+.wcb-section-title { font-size: 12px; font-weight: 600; padding: 0 8px; }
+.wcb-grid { padding: 0 4px; }
+.wcb-grid-row { spacing: 1px; }
+.wcb-category-bar { padding: 4px 4px 0 4px; spacing: 2px; }
+.wcb-category { padding: 7px 0; border-radius: 4px; }
+
+.wcb-dark .wcb-tab, .wcb-dark .wcb-category, .wcb-dark .wcb-emoji,
+.wcb-dark .wcb-tone-button, .wcb-dark .wcb-section-title { color: #ffffff; }
+.wcb-dark .wcb-section-title { color: rgba(255, 255, 255, 0.72); }
+.wcb-dark .wcb-tab:hover, .wcb-dark .wcb-category:hover, .wcb-dark .wcb-emoji:hover,
+.wcb-dark .wcb-tone-button:hover { background-color: rgba(255, 255, 255, 0.08); }
+.wcb-dark .wcb-tab:checked, .wcb-dark .wcb-category:checked {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: -st-accent-color;
+}
+.wcb-dark .wcb-emoji:selected { border-color: rgba(255, 255, 255, 0.92); }
+.wcb-dark .wcb-search {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  caret-color: #ffffff;
+  selection-background-color: -st-accent-color;
+}
+.wcb-dark .wcb-search:focus { border-bottom-color: -st-accent-color; background-color: rgba(30, 30, 30, 1); }
+.wcb-dark .wcb-search StLabel.hint-text { color: rgba(255, 255, 255, 0.6); }
+.wcb-dark .wcb-search-icon { color: rgba(255, 255, 255, 0.7); }
+
+.wcb-light .wcb-tab, .wcb-light .wcb-category, .wcb-light .wcb-emoji,
+.wcb-light .wcb-tone-button { color: #1b1b1b; }
+.wcb-light .wcb-section-title { color: rgba(0, 0, 0, 0.62); }
+.wcb-light .wcb-tab:hover, .wcb-light .wcb-category:hover, .wcb-light .wcb-emoji:hover,
+.wcb-light .wcb-tone-button:hover { background-color: rgba(0, 0, 0, 0.05); }
+.wcb-light .wcb-tab:checked, .wcb-light .wcb-category:checked {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: -st-accent-color;
+}
+.wcb-light .wcb-emoji:selected { border-color: rgba(0, 0, 0, 0.88); }
+.wcb-light .wcb-search {
+  color: #1b1b1b;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: rgba(0, 0, 0, 0.45);
+  caret-color: #1b1b1b;
+  selection-background-color: -st-accent-color;
+}
+.wcb-light .wcb-search:focus { border-bottom-color: -st-accent-color; background-color: #ffffff; }
+.wcb-light .wcb-search StLabel.hint-text { color: rgba(0, 0, 0, 0.55); }
+.wcb-light .wcb-search-icon { color: rgba(0, 0, 0, 0.6); }

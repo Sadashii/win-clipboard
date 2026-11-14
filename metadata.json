@@ -1,0 +1,13 @@
+{
+  "uuid": "win-clipboard@local",
+  "name": "Win Clipboard",
+  "description": "Windows 11 style clipboard history (Super+V) and emoji panel (Super+.). Text and images, pinning, keyboard navigation and paste-on-select.",
+  "shell-version": [
+    "48",
+    "49",
+    "50"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.win-clipboard",
+  "url": "https://github.com/Sadashii/win-clipboard",
+  "version": 1
+}

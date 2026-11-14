@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.win-clipboard" path="/org/gnome/shell/extensions/win-clipboard/">
+    <key name="toggle-clipboard" type="as">
+      <default>['&lt;Super&gt;v']</default>
+      <summary>Shortcut that opens the clipboard history</summary>
+    </key>
+    <key name="toggle-emoji" type="as">
+      <default>['&lt;Super&gt;period', '&lt;Super&gt;semicolon']</default>
+      <summary>Shortcut that opens the emoji panel</summary>
+    </key>
+    <key name="emoji-skin-tone" type="i">
+      <range min="0" max="5"/>
+      <default>0</default>
+      <summary>Skin tone used for emoji (0 = default yellow)</summary>
+    </key>
+    <key name="recent-emoji" type="as">
+      <default>[]</default>
+      <summary>Recently used emoji</summary>
+    </key>
+    <key name="max-items" type="i">
+      <range min="5" max="200"/>
+      <default>25</default>
+      <summary>Maximum number of unpinned items kept (Windows uses 25)</summary>
+    </key>
+    <key name="paste-on-select" type="b">
+      <default>true</default>
+      <summary>Paste into the focused app after picking an item</summary>
+    </key>
+    <key name="persist-history" type="b">
+      <default>true</default>
+      <summary>Keep unpinned items across restarts (Windows only keeps pinned ones)</summary>
+    </key>
+    <key name="removed-shell-bindings" type="as">
+      <default>[]</default>
+      <summary>Internal: shell bindings taken over while enabled</summary>
+    </key>
+  </schema>
+</schemalist>
