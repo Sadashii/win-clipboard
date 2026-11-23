@@ -66,6 +66,32 @@ class ClipboardPage {
         header.add_child(this._clearButton);
         this.actor.add_child(header);
 
+        // Search box. Typing anywhere on the page starts a search (except Space
+        // and P, which keep their shortcuts while the box is empty); Ctrl+F or a
+        // click focuses it, Esc clears it.
+        const searchRow = new St.BoxLayout({style_class: 'wcb-search-row'});
+        this.entry = new St.Entry({
+            style_class: 'wcb-search',
+            hint_text: 'Search clipboard',
+            can_focus: true,
+            x_expand: true,
+            primary_icon: new St.Icon({icon_name: 'system-search-symbolic', style_class: 'wcb-search-icon'}),
+        });
+        this.entry.clutter_text.connect('text-changed', () => {
+            this._terms = this.entry.text.toLowerCase().split(/\s+/).filter(Boolean);
+            this._selected = 0;
+            this._expandedId = null;
+            this.rebuild();
+            this._scroll.vadjustment.value = 0;
+        });
+        this.entry.clutter_text.connect('key-press-event', (_a, event) =>
+            this._handleSearchKey(event.get_key_symbol())
+                ? Clutter.EVENT_STOP : Clutter.EVENT_PROPAGATE);
+        searchRow.add_child(this.entry);
+        this.actor.add_child(searchRow);
+        this._terms = [];
+        this._lowerCache = new WeakMap();
+
         this._list = new St.BoxLayout({
             style_class: 'wcb-list',
             orientation: Clutter.Orientation.VERTICAL,
@@ -84,22 +110,66 @@ class ClipboardPage {
     }
 
     reset() {
+        this.entry.text = '';
         this._selected = 0;
         this._expandedId = null;
         this.rebuild();
         this._scroll.vadjustment.value = 0;
     }
 
+    get searching() {
+        return this._terms.length > 0;
+    }
+
+    get searchFocused() {
+        return global.stage.key_focus === this.entry.clutter_text;
+    }
+
+    focusSearch(initialText = null) {
+        this.entry.grab_key_focus();
+        if (initialText !== null)
+            this.entry.text = this.entry.text + initialText;
+        this.entry.clutter_text.set_cursor_position(-1);
+        this.entry.clutter_text.set_selection_bound(-1);
+    }
+
+    // Esc: clears the search first. Returns true if there was one to clear.
+    clearSearch() {
+        if (!this.entry.text)
+            return false;
+        this.entry.text = '';
+        return true;
+    }
+
+    _lower(item) {
+        let lower = this._lowerCache.get(item);
+        if (lower === undefined) {
+            lower = item.text.toLowerCase();
+            this._lowerCache.set(item, lower);
+        }
+        return lower;
+    }
+
+    _matches(item) {
+        if (item.type !== 'text')
+            return false;
+        const lower = this._lower(item);
+        return this._terms.every(t => lower.includes(t));
+    }
+
     rebuild() {
-        const items = this._history.items;
+        const all = this._history.items;
+        const items = this.searching ? all.filter(i => this._matches(i)) : all;
         this._list.destroy_all_children();
         this._cards = [];
-        this._clearButton.reactive = items.some(i => !i.pinned);
+        this._clearButton.reactive = all.some(i => !i.pinned);
         this._clearButton.opacity = this._clearButton.reactive ? 255 : 110;
 
         if (items.length === 0) {
             const empty = new St.Label({
-                text: 'You\'ll see your clipboard history here once you\'ve copied something.',
+                text: this.searching
+                    ? `Nothing in your clipboard history matches “${this.entry.text.trim()}”.`
+                    : 'You\'ll see your clipboard history here once you\'ve copied something.',
                 style_class: 'wcb-empty',
                 x_expand: true,
             });
@@ -232,13 +302,95 @@ class ClipboardPage {
     }
 
     _previewText(text) {
-        const lines = text.replace(/\t/g, '    ').replace(/\r\n?/g, '\n').trim().split('\n');
+        let lines = text.replace(/\t/g, '    ').replace(/\r\n?/g, '\n').trim().split('\n');
+        let prefix = '';
+        let matchLine = -1, matchCol = 0;
+        // When searching, start the preview at the first match so it's visible.
+        if (this.searching) {
+            const term = this._terms[0];
+            matchLine = lines.findIndex(l => l.toLowerCase().includes(term));
+            if (matchLine >= PREVIEW_LINES) {
+                lines = lines.slice(matchLine);
+                prefix = '…\n';
+                matchLine = 0;
+            }
+            if (matchLine >= 0)
+                matchCol = lines[matchLine].toLowerCase().indexOf(term);
+        }
         let preview = lines.slice(0, PREVIEW_LINES)
-            .map(l => (l.length > 220 ? `${l.slice(0, 220)}…` : l))
+            .map((l, i) => {
+                if (l.length <= 220)
+                    return l;
+                const start = i === matchLine && matchCol > 180 ? matchCol - 60 : 0;
+                return `${start > 0 ? '…' : ''}${l.slice(start, start + 220)}…`;
+            })
             .join('\n');
         if (lines.length > PREVIEW_LINES)
             preview += '\n…';
-        return preview;
+        return prefix + preview;
+    }
+
+    _move(delta, wrap = true) {
+        const count = this._cards.length;
+        if (!count)
+            return;
+        let next = this._selected + delta;
+        next = wrap ? (next + count) % count : Math.max(0, Math.min(next, count - 1));
+        this._selected = next;
+        this._updateSelection();
+    }
+
+    // Keys typed while the search box has focus; returns true if handled.
+    _handleSearchKey(key) {
+        const item = this._cards[this._selected]?._wcbItem;
+        switch (key) {
+        case Clutter.KEY_Down:
+        case Clutter.KEY_Tab:
+            this._move(1);
+            return true;
+        case Clutter.KEY_Up:
+        case Clutter.KEY_ISO_Left_Tab:
+            this._move(-1);
+            return true;
+        case Clutter.KEY_Page_Down:
+            this._move(5, false);
+            return true;
+        case Clutter.KEY_Page_Up:
+            this._move(-5, false);
+            return true;
+        case Clutter.KEY_Return:
+        case Clutter.KEY_KP_Enter:
+            if (item)
+                this._onActivate(item);
+            return true;
+        }
+        return false;
+    }
+
+    // Key presses reaching the panel (search box not focused).
+    handleKeyEvent(event) {
+        if (this.searchFocused)
+            return false;
+        const key = event.get_key_symbol();
+        const state = event.get_state();
+        const modifiers = Clutter.ModifierType.CONTROL_MASK | Clutter.ModifierType.MOD1_MASK | SUPER;
+
+        if ((state & Clutter.ModifierType.CONTROL_MASK) && (key === Clutter.KEY_f || key === Clutter.KEY_F)) {
+            this.focusSearch();
+            return true;
+        }
+        if (!(state & modifiers) && this.handleKey(key))
+            return true;
+
+        // Any other printable character starts a search.
+        let ch = event.get_key_unicode();
+        if (typeof ch === 'number')
+            ch = ch ? String.fromCodePoint(ch) : '';
+        if (!(state & modifiers) && ch && !/[\x00-\x1f\x7f]/.test(ch)) {
+            this.focusSearch(ch);
+            return true;
+        }
+        return false;
     }
 
     _updateSelection(scroll = true) {
@@ -387,7 +539,7 @@ class Popup {
         });
         this._panel.connect('captured-event', this._onCapturedEvent.bind(this));
         this._panel.connect('key-press-event', (_a, event) =>
-            this._tab === 'clipboard' && this._clipboardPage.handleKey(event.get_key_symbol())
+            this._tab === 'clipboard' && this._clipboardPage.handleKeyEvent(event)
                 ? Clutter.EVENT_STOP : Clutter.EVENT_PROPAGATE);
         this._backdrop.add_child(this._panel);
 
@@ -466,6 +618,8 @@ class Popup {
         this._emojiPage.actor.visible = tab === 'emoji';
         if (tab === 'emoji')
             this._emojiPage.focus();
+        else if (this._clipboardPage.searching)
+            this._clipboardPage.focusSearch();
         else
             this._panel.grab_key_focus();
     }
@@ -520,6 +674,12 @@ class Popup {
         if (key === Clutter.KEY_Escape) {
             if (this._tab === 'clipboard' && this._clipboardPage.collapse())
                 return Clutter.EVENT_STOP;
+            if (this._tab === 'clipboard' &&
+                (this._clipboardPage.clearSearch() || this._clipboardPage.searchFocused)) {
+                // Back to the list so the single-key shortcuts work again.
+                this._panel.grab_key_focus();
+                return Clutter.EVENT_STOP;
+            }
             if (this._tab === 'emoji' && this._emojiPage.entry.text) {
                 this._emojiPage.entry.text = '';
                 return Clutter.EVENT_STOP;

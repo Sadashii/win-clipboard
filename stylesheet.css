@@ -19,7 +19,9 @@
 .wcb-card {
   border-radius: 6px;
   border: 2px solid transparent;
-  min-height: 44px;
+  /* No min-height here: in St it overrides the computed minimum instead of
+     clamping it, and the scroll viewport allocates the list at its minimum,
+     so every card would be squashed to that height. */
 }
 .wcb-content {
   padding: 10px 6px 10px 12px;

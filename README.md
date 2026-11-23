@@ -6,6 +6,8 @@ Windows 11 style clipboard history (Win+V) and emoji panel (Win+.) for GNOME She
 - Stores text and images (25 unpinned items by default, as on Windows). Pinned items survive "Clear all".
 - Click or press Enter to paste into the app you were using (Ctrl+V, or Ctrl+Shift+V in terminals).
 - Keys: ↑/↓/Tab to move, Enter/Space to paste, Delete to remove, P to pin/unpin, → to show the item's actions, Esc to close.
+- Search: just start typing (or Ctrl+F / click the search box) to filter text items; all words must match, case-insensitive.
+  ↑/↓ and Enter still work while searching; Esc clears the search.
 - Skips anything a password manager marks as secret.
 - Follows the system light/dark setting.
 
